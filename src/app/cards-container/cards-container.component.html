@@ -1,0 +1,3 @@
+<button (click)="showState()">show current state</button>
+<app-cards-filter [filters]="filters$ | async"></app-cards-filter>
+<app-cards-list [cards]="cards$ | async"></app-cards-list>

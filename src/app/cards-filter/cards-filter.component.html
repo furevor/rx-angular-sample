@@ -1,0 +1,13 @@
+<p>click on any filter!</p>
+<div class="main-filters">
+
+</div>
+<ul>
+  <li>
+    <a [routerLink]="['/']">show all</a>
+  </li>
+  <li *ngFor="let filter of filters; let i = index" routerLinkActive="is-active" #rla="routerLinkActive">
+    <a [routerLink]="['/', filter.category]">{{ filter.category }}</a>
+    <p *ngIf="rla.isActive && filter.subCategory">subcategory: {{ filter.subCategory }}</p>
+  </li>
+</ul>

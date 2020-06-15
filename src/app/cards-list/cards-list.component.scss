@@ -1,0 +1,26 @@
+.cards-container {
+  padding: 10px;
+  border: 2px solid gray;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 600px;
+}
+
+.card {
+  width: 100px;
+  height: 120px;
+  border: 1px solid black;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card p {
+  margin: 0;
+}
