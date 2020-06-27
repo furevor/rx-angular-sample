@@ -15,8 +15,13 @@ export class MobileCardFilterComponent implements OnInit {
     ngOnInit() {}
 
     subCategoryChanged(filter: CardFilter) {
+        const { category, subCategory, subCategories } = filter;
         this.filterHasBeenChanged.emit(
-            new CardFilter(filter.category, filter.subCategory, [...(filter.subCategories || [])]),
+            new CardFilter({
+                category,
+                subCategory,
+                subCategories: [...subCategories],
+            }),
         );
     }
 }

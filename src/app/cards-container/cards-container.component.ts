@@ -39,7 +39,11 @@ export class CardsContainerComponent implements OnInit {
     connectToStore() {
         const filterFromUrl$: Observable<CardFilter> = this.route.paramMap.pipe(
             map((params: ParamMap) => params.get('filter')),
-            switchMap((searchedFilter: string) => this.filtersService.findFilterByRoute(searchedFilter)),
+            switchMap((searchedFilter: string) =>
+                this.filters$.pipe(
+                    map((filters: CardFilter[]) => this.filtersService.findFilterByRoute(filters, searchedFilter)),
+                ),
+            ),
         );
         const filterSideBar$: Observable<CardFilter> = this.sidebarFilterChanged$;
 
@@ -49,7 +53,7 @@ export class CardsContainerComponent implements OnInit {
             switchMap((searchedCategoryFilter: CardFilter) => this.cardsService.filterCards(searchedCategoryFilter)),
         );
 
-        const filterCardsArray$: Observable<CardFilter[]> = this.filtersService.getFilters();
+        const filterCardsArray$: Observable<CardFilter[]> = merge(this.filtersService.getFilters());
 
         this.state.connect('currentFilter', filterState$);
         this.state.connect('cardsFilters', filterCardsArray$);
@@ -57,6 +61,7 @@ export class CardsContainerComponent implements OnInit {
     }
 
     updateCategory(categoryFilter: CardFilter): void {
+        this;
         this.sidebarFilterChanged$.next(categoryFilter);
     }
 

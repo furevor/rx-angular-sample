@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FakeBackendService } from './fake-backend.service';
 import { CardFilter } from '../app-models';
-import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -10,14 +9,11 @@ import { map, tap } from 'rxjs/operators';
 export class FilterDataService {
     constructor(private fakeBackendService: FakeBackendService) {}
 
-    findFilterByRoute(routerParam: string): Observable<CardFilter> {
+    findFilterByRoute(filters: CardFilter[], routerParam: string): CardFilter {
         if (routerParam) {
-            const filters$ = this.getFilters();
-            return filters$.pipe(
-                map((filters: CardFilter[]) => filters.find((filter) => filter.category === routerParam)),
-            );
+            return filters.find((filter) => filter.category === routerParam);
         } else {
-            return of(new CardFilter());
+            return new CardFilter({});
         }
     }
 

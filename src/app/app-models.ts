@@ -1,9 +1,11 @@
 export class CardFilter {
-    constructor(category: string = '', subCategory: string = '', subCategories: Subcategory[] = []) {
+    constructor({ isActive = false, category = '', subCategory = '', subCategories = [] }) {
+        this.isActive = isActive;
         this.category = category;
         this.subCategory = subCategory;
         this.subCategories = subCategories;
     }
+    isActive?: boolean;
     category: string;
     subCategory?: string;
     subCategories?: Array<Subcategory>;
