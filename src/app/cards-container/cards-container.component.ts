@@ -19,7 +19,7 @@ export class CardsContainerComponent implements OnInit {
     readonly cards$: Observable<Card[]> = this.state.select('cardsList');
     readonly currentFilter$: Observable<CardFilter> = this.state.select('currentFilter');
 
-    private showMobileVersion = true;
+    private showMobileVersion = false;
 
     constructor(
         private router: Router,
