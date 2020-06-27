@@ -12,9 +12,7 @@ export class FilterDataService {
 
     findFilterByRoute(routerParam: string): Observable<CardFilter> {
         if (routerParam) {
-            const filters$ = this.getFilters().pipe(
-                tap((val) => console.log('Есть всего два обращения к потоку... И это второй. ', val)),
-            );
+            const filters$ = this.getFilters();
             return filters$.pipe(
                 map((filters: CardFilter[]) => filters.find((filter) => filter.category === routerParam)),
             );

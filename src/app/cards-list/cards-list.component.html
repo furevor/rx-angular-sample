@@ -1,6 +1,7 @@
 <div class="cards-container">
-  <div class="card" *ngFor="let card of cards; let i = index">
+  <div class="card" [ngClass]="card.category" *ngFor="let card of cards; let i = index">
     <p>{{ card.title }}</p>
     <p>{{ card.price }} {{ card.unit }}</p>
+    <p>flavor: {{ card.flavor }}</p>
   </div>
 </div>

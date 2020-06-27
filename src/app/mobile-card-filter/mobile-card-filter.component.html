@@ -1,12 +1,12 @@
-<p>this is desktop filter!</p>
+<p>this is mobile filter!</p>
 <ul>
-    <li>
-        <a [routerLink]="['/']">show all</a>
-    </li>
-    <li *ngFor="let filter of filters" routerLinkActive="is-active" #rla="routerLinkActive">
-        <a [routerLink]="['/', filter.category]">{{ filter.category }}</a>
-        <div *ngIf="rla.isActive && filter.subCategory">
-            <ul class="checkbox-list">
+    <li *ngFor="let filter of filters">
+        <label>
+            <input type="radio" name="category" [value]="filter.category" [(ngModel)]="filter.category" (ngModelChange)="subCategoryChanged(filter)" [checked]="currentFilter.category === filter.category">
+            <span>{{ filter.category }}</span>
+        </label>
+        <div>
+            <ul class="checkbox-list" *ngIf="filter.subCategories">
                 <li *ngFor="let subCategory of filter.subCategories" class="checkbox-list__item">
                     <label class="checkbox">
                         <input [(ngModel)]="subCategory.checked" (ngModelChange)="subCategoryChanged(filter)" class="checkbox__input" type="checkbox">

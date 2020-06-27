@@ -1,16 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, merge, Subject } from 'rxjs';
 import { map, switchMap, publishReplay, refCount, tap } from 'rxjs/operators';
-import { RxState } from '@rx-angular/state';
-import { CardsStoreService, CardsAppState } from '../store/cards-store.service';
+import { CardsStoreService } from '../store/cards-store.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CardFilter, Card } from '../app-models';
 import { FilterDataService } from '../services/filter-data.serivce';
 import { CardsDataService } from '../services/cards-data.service';
-
-const initState: Partial<CardsAppState> = {
-    currentFilter: new CardFilter(),
-};
 
 @Component({
     selector: 'app-cards-container',
@@ -22,6 +17,9 @@ export class CardsContainerComponent implements OnInit {
     readonly sidebarFilterChanged$: Subject<CardFilter> = new Subject<CardFilter>();
     readonly filters$: Observable<CardFilter[]> = this.state.select('cardsFilters');
     readonly cards$: Observable<Card[]> = this.state.select('cardsList');
+    readonly currentFilter$: Observable<CardFilter> = this.state.select('currentFilter');
+
+    private showMobileVersion = true;
 
     constructor(
         private router: Router,
@@ -30,7 +28,6 @@ export class CardsContainerComponent implements OnInit {
         private filtersService: FilterDataService,
         private cardsService: CardsDataService,
     ) {
-        // state.set(initState);
         this.state.select('currentFilter').subscribe((val) => {
             console.warn('Следим за стейтом фильтра... ', val);
         });
@@ -42,34 +39,32 @@ export class CardsContainerComponent implements OnInit {
     connectToStore() {
         const filterFromUrl$: Observable<CardFilter> = this.route.paramMap.pipe(
             map((params: ParamMap) => params.get('filter')),
-            switchMap((searchedFilter: string) =>
-                this.filtersService
-                    .findFilterByRoute(searchedFilter)
-                    .pipe(tap((hello) => console.log('На выходе стейта фильтра ', hello))),
-            ),
+            switchMap((searchedFilter: string) => this.filtersService.findFilterByRoute(searchedFilter)),
         );
         const filterSideBar$: Observable<CardFilter> = this.sidebarFilterChanged$;
 
         const filterState$: any = merge(filterFromUrl$, filterSideBar$).pipe(publishReplay(1), refCount());
 
-        const filteredCards$: Observable<Card[]> = this.state
-            .select('currentFilter')
-            .pipe(
-                switchMap((searchedCategoryFilter: CardFilter) =>
-                    this.cardsService.filterCards(searchedCategoryFilter),
-                ),
-            );
+        const filteredCards$: Observable<Card[]> = this.currentFilter$.pipe(
+            switchMap((searchedCategoryFilter: CardFilter) => this.cardsService.filterCards(searchedCategoryFilter)),
+        );
 
-        const filterCardsArray$: Observable<CardFilter[]> = this.filtersService
-            .getFilters()
-            .pipe(tap((val) => console.log('Есть всего два обращения к потоку... И это первый. ', val)));
+        const filterCardsArray$: Observable<CardFilter[]> = this.filtersService.getFilters();
 
         this.state.connect('currentFilter', filterState$);
         this.state.connect('cardsFilters', filterCardsArray$);
         this.state.connect('cardsList', filteredCards$);
     }
 
+    updateCategory(categoryFilter: CardFilter): void {
+        this.sidebarFilterChanged$.next(categoryFilter);
+    }
+
     showState() {
         console.log('Here is your state ', this.state.get());
+    }
+
+    toggleMobileVersion() {
+        this.showMobileVersion = !this.showMobileVersion;
     }
 }
