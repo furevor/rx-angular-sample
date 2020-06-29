@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, merge, Subject } from 'rxjs';
+import { Observable, merge, Subject, defer, concat } from 'rxjs';
 import { map, switchMap, publishReplay, refCount, tap } from 'rxjs/operators';
 import { CardsStoreService } from '../store/cards-store.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -14,7 +14,8 @@ import { CardsDataService } from '../services/cards-data.service';
     providers: [CardsStoreService],
 })
 export class CardsContainerComponent implements OnInit {
-    readonly sidebarFilterChanged$: Subject<CardFilter> = new Subject<CardFilter>();
+    // readonly sidebarFilterChanged$: Subject<CardFilter> = new Subject<CardFilter>();
+    readonly filterListChanges$: Subject<CardFilter[]> = new Subject<CardFilter[]>();
     readonly filters$: Observable<CardFilter[]> = this.state.select('cardsFilters');
     readonly cards$: Observable<Card[]> = this.state.select('cardsList');
     readonly currentFilter$: Observable<CardFilter> = this.state.select('currentFilter');
@@ -45,24 +46,24 @@ export class CardsContainerComponent implements OnInit {
                 ),
             ),
         );
-        const filterSideBar$: Observable<CardFilter> = this.sidebarFilterChanged$;
-
-        const filterState$: any = merge(filterFromUrl$, filterSideBar$).pipe(publishReplay(1), refCount());
+        const filterState$: any = filterFromUrl$.pipe(publishReplay(1), refCount());
 
         const filteredCards$: Observable<Card[]> = this.currentFilter$.pipe(
             switchMap((searchedCategoryFilter: CardFilter) => this.cardsService.filterCards(searchedCategoryFilter)),
         );
 
-        const filterCardsArray$: Observable<CardFilter[]> = merge(this.filtersService.getFilters());
+        const filterCardsArray$: Observable<CardFilter[]> = concat(
+            defer(() => this.filtersService.getFilters()),
+            this.filterListChanges$,
+        );
 
         this.state.connect('currentFilter', filterState$);
         this.state.connect('cardsFilters', filterCardsArray$);
         this.state.connect('cardsList', filteredCards$);
     }
 
-    updateCategory(categoryFilter: CardFilter): void {
-        this;
-        this.sidebarFilterChanged$.next(categoryFilter);
+    updateFilters(categoryFilter: CardFilter[]): void {
+        this.filterListChanges$.next(categoryFilter);
     }
 
     showState() {

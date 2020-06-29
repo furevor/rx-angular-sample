@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { CardsContainerComponent } from './cards-container/cards-container.component';
 import { CardsListComponent } from './cards-list/cards-list.component';
 import { CardsFilterComponent } from './cards-filter/cards-filter.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MobileCardFilterComponent } from './mobile-card-filter/mobile-card-filter.component';
 
 @NgModule({
@@ -17,7 +17,7 @@ import { MobileCardFilterComponent } from './mobile-card-filter/mobile-card-filt
         CardsContainerComponent,
         MobileCardFilterComponent,
     ],
-    imports: [BrowserModule, AppRoutingModule, FormsModule],
+    imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
     providers: [],
     bootstrap: [AppComponent],
 })

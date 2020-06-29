@@ -1,5 +1,5 @@
 <button (click)="showState()">show current state</button>
 <button (click)="toggleMobileVersion()">Change mobile/desktop view</button>
-<app-cards-filter *ngIf="!showMobileVersion" [filters]="filters$ | async" (filterHasBeenChanged)="updateCategory($event)"></app-cards-filter>
-<app-mobile-card-filter *ngIf="showMobileVersion" [filters]="filters$ | async" (filterHasBeenChanged)="updateCategory($event)" [currentFilter]="currentFilter$ | async"></app-mobile-card-filter>
+<app-cards-filter *ngIf="!showMobileVersion" [filters]="filters$ | async" (filtersListHasBeenChanged)="updateFilters($event)"></app-cards-filter>
+<app-mobile-card-filter *ngIf="showMobileVersion" [filters]="filters$ | async" [currentFilter]="currentFilter$ | async"></app-mobile-card-filter>
 <app-cards-list [cards]="cards$ | async"></app-cards-list>

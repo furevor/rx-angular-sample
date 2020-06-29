@@ -1,20 +1,28 @@
 <p>this is desktop filter!</p>
-<ul>
-    <li>
-        <a [routerLink]="['/']">show all</a>
-    </li>
-    <li *ngFor="let filter of filters" routerLinkActive="is-active" #rla="routerLinkActive">
-        <a [routerLink]="['/', filter.category]">{{ filter.category }}</a>
-        <div *ngIf="rla.isActive && filter.subCategory">
-            <ul class="checkbox-list">
-                <li *ngFor="let subCategory of filter.subCategories" class="checkbox-list__item">
-                    <label class="checkbox">
-                        <input [(ngModel)]="subCategory.checked" (ngModelChange)="subCategoryChanged(filter)" class="checkbox__input" type="checkbox">
-                        <span class="checkbox__icon"></span>
-                        <span class="checkbox__text">{{ subCategory.title }}</span>
-                    </label>
-                </li>
-            </ul>
-        </div>
-    </li>
-</ul>
+<form [formGroup]="filtersForm">
+    <ul>
+        <li>
+            <a [routerLink]="['/']">show all</a>
+        </li>
+        <li formArrayName="filters" *ngFor="let filter of filtersForm.get('filters').controls; let i = index;" routerLinkActive="is-active" #rla="routerLinkActive">
+            <div [formGroupName]="i">
+                <a [routerLink]="['/', filter.value.category]">{{ filter.value.category }}</a>
+                <div *ngIf="rla.isActive && filter.value.subCategories">
+                    <ul class="checkbox-list">
+                        <li formArrayName="subCategories" *ngFor="let subCategory of filtersForm.get('filters').controls[i].controls.subCategories.controls; let j = index;" class="checkbox-list__item">
+                            <div [formGroupName]="j">
+                                <label class="checkbox">
+                                    <input formControlName="checked"
+                                           class="checkbox__input" type="checkbox">
+                                    <span class="checkbox__icon"></span>
+                                    <span class="checkbox__text">{{ subCategory.value.title }}</span>
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+</form>

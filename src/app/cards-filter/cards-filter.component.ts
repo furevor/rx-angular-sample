@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { CardFilter } from '../app-models';
+import { CardFilter, Subcategory } from '../app-models';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-cards-filter',
@@ -8,19 +9,67 @@ import { CardFilter } from '../app-models';
 })
 export class CardsFilterComponent implements OnInit {
     @Input() filters: CardFilter[] = [];
-    @Output() filterHasBeenChanged = new EventEmitter<CardFilter>();
-    constructor() {}
+    @Output() filtersListHasBeenChanged = new EventEmitter<CardFilter[]>();
+    filtersForm: FormGroup;
 
-    ngOnInit() {}
+    constructor(private fb: FormBuilder) {
+        this.filtersForm = this.fb.group({
+            filters: this.fb.array([]),
+        });
+    }
 
-    subCategoryChanged(filter: CardFilter) {
-        const { category, subCategory, subCategories } = filter;
-        this.filterHasBeenChanged.emit(
-            new CardFilter({
-                category,
-                subCategory,
-                subCategories: [...subCategories],
-            }),
-        );
+    ngOnInit() {
+        this.initForm();
+        this.patchFiltersForm();
+        this.listenFiltersChanges();
+    }
+
+    private initForm() {
+        if (this.filters) {
+            this.filters.forEach((filter) => this.addFilter(filter));
+        }
+    }
+
+    private patchFiltersForm() {
+        if (this.filters) {
+            this.filtersForm.patchValue({
+                filters: this.filters,
+            });
+        }
+    }
+
+    private addFilter(filter: CardFilter): void {
+        const control = this.filtersForm.get('filters') as FormArray;
+        control.push(this.initFilter(filter));
+    }
+
+    private initFilter(filter: CardFilter) {
+        return this.fb.group({
+            isActive: false,
+            category: '',
+            subCategory: '',
+            subCategories: this.initSubcategories(filter),
+        });
+    }
+
+    initSubcategories(filter: CardFilter) {
+        const subcategories = this.fb.array([]);
+        if (filter.subCategories) {
+            filter.subCategories.forEach((subcategory) => {
+                subcategories.push(
+                    this.fb.group({
+                        checked: false,
+                        title: '',
+                    }),
+                );
+            });
+        }
+        return subcategories;
+    }
+
+    listenFiltersChanges() {
+        this.filtersForm.get('filters').valueChanges.subscribe((filters) => {
+            this.filtersListHasBeenChanged.emit(filters);
+        });
     }
 }
