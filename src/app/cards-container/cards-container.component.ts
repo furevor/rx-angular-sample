@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, merge, Subject, defer, concat } from 'rxjs';
-import { map, switchMap, publishReplay, refCount, tap } from 'rxjs/operators';
+import { Observable, Subject, defer, concat } from 'rxjs';
+import { map, switchMap, publishReplay, refCount } from 'rxjs/operators';
 import { CardsStoreService } from '../store/cards-store.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CardFilter, Card } from '../app-models';
@@ -14,7 +14,6 @@ import { CardsDataService } from '../services/cards-data.service';
     providers: [CardsStoreService],
 })
 export class CardsContainerComponent implements OnInit {
-    // readonly sidebarFilterChanged$: Subject<CardFilter> = new Subject<CardFilter>();
     readonly filterListChanges$: Subject<CardFilter[]> = new Subject<CardFilter[]>();
     readonly filters$: Observable<CardFilter[]> = this.state.select('cardsFilters');
     readonly cards$: Observable<Card[]> = this.state.select('cardsList');

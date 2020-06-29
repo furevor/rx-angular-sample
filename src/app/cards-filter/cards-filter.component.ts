@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { CardFilter, Subcategory } from '../app-models';
+import { CardFilter } from '../app-models';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -32,6 +32,7 @@ export class CardsFilterComponent implements OnInit {
 
     private patchFiltersForm() {
         if (this.filters) {
+            // TODO: change to something like this ...this.filters
             this.filtersForm.patchValue({
                 filters: this.filters,
             });
