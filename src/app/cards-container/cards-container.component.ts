@@ -14,7 +14,6 @@ import { CardsDataService } from '../services/cards-data.service';
     providers: [CardsStoreService],
 })
 export class CardsContainerComponent implements OnInit {
-    // readonly sidebarFilterChanged$: Subject<CardFilter> = new Subject<CardFilter>();
     readonly filterListChanges$: Subject<CardFilter[]> = new Subject<CardFilter[]>();
     readonly filters$: Observable<CardFilter[]> = this.state.select('cardsFilters');
     readonly cards$: Observable<Card[]> = this.state.select('cardsList');
